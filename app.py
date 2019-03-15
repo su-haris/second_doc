@@ -88,7 +88,7 @@ def androidapi():
 @app.route('/get_label', methods=['GET','POST']) #landing page intent
 def label():
     if request.method=='POST':
-        app.config['UPLOAD_FOLDER']="/Users/pranoy/Desktop/second_opinion/uploads/"
+        app.config['UPLOAD_FOLDER']="/home/ubuntu/second_doc/uploadedfiles/"
         if not os.path.exists(app.config['UPLOAD_FOLDER']):
             os.makedirs(app.config['UPLOAD_FOLDER'])
         try:
@@ -113,7 +113,7 @@ def allowed_file(filename):
 @app.route('/', methods=['GET','POST'])
 def home():
     if request.method=='POST':
-        app.config['UPLOAD_FOLDER']="/Users/pranoy/Desktop/second_opinion/uploads/"
+        app.config['UPLOAD_FOLDER']="/home/ubuntu/second_doc/uploadedfiles/"
         if not os.path.exists(app.config['UPLOAD_FOLDER']):
             os.makedirs(app.config['UPLOAD_FOLDER'])
         # try:
@@ -133,7 +133,7 @@ def home():
     return render_template("index.html") #display the html template
 
 if __name__=='__main__':
-	app.run(debug=True,host="0.0.0.0",port=80) 
+	app.run(debug=False,host="0.0.0.0",port=80) 
     #use threaded=True instead of debug=True for production
     # use port =80 for using the http port
 
