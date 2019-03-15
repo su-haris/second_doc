@@ -11,9 +11,16 @@ from torchvision import transforms, datasets, models
 from torch.utils.data.sampler import SubsetRandomSampler
 from werkzeug.utils import secure_filename
 import os
-
+from slackeventsapi import SlackEventAdapter
+from slackclient import SlackClient
+from slacker import Slacker
+import urllib
 # UPLOAD_FOLDER = '/Users/pranoy/Desktop/second_opinion/uploads/'
 # ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+web_hook_url = 'https://hooks.slack.com/services/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'
+
+slack_msg = {'text':'event_data'}
 
 model = models.resnet50(pretrained=True)
 
@@ -83,7 +90,40 @@ def androidapi():
             print("No Parasite")
             return "No Parasite"
     return "Error"
-
+@app.route('/slack', methods=['GET','POST']) #landing page intent
+def slack_request():
+    if request.method=='POST':
+        print(request.data)
+        try:
+            if request.json["event"]["subtype"] == "bot_message":
+                print("\nMessages")
+            elif request.json["event"]["files"][0]["filetype"] == "png":
+                slackClient = Slacker("xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E")
+                slackClient.chat.post_message("#general", "Malaria Image Found. Please wait while we are analysing the image.")
+                u = request.json["event"]["files"][0]["url_private_download"]
+                token = 'xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E'
+                opener = urllib.request.build_opener()
+                opener.addheaders = [('Authorization','Bearer '+token)]
+                urllib.request.install_opener(opener)
+                urllib.request.urlretrieve (u, "/home/ubuntu/second_doc/uploadedfiles/frombot.png")
+                img_path = "/home/ubuntu/second_doc/uploadedfiles/frombot.png"
+                if predict_malaria(model, class_names, img_path) == 'Parasitized':
+                    print("Infected")
+                    slackClient = Slacker("xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E")
+                    slackClient.chat.post_message("#general", "Infected")
+                    return "Infected"
+                else:
+                    print("unInfected")
+                    slackClient = Slacker("xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E")
+                    slackClient.chat.post_message("#general", "Uninfected")
+                    return "Uninfected"
+            else:
+                print("\nMessages")
+                return "Hello"
+        except Exception as e:
+            print("Exception occured",e)
+            return "Hello"
+    return "Hello"
 
 @app.route('/get_label', methods=['GET','POST']) #landing page intent
 def label():
@@ -104,7 +144,6 @@ def label():
                 return "Un-Infected"
         except:
             print("error")
-        
 
 def allowed_file(filename):
     return '.' in filename and \
