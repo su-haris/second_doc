@@ -95,13 +95,31 @@ def slack_request():
     if request.method=='POST':
         print(request.data)
         try:
-            if request.json["event"]["subtype"] == "bot_message":
+            if request.json["event"]["text"] == "Hey":
+                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient.chat.post_message("#general", "Hey, Want to test your blood sample? (yes or no)")
+                return "Hey"
+            elif request.json["event"]["text"] == "yes":
+                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient.chat.post_message("#general", "Hey, please upload your blood test sample")
+                return "hey"
+            
+            elif request.json["event"]["text"] == "hey":
+                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient.chat.post_message("#general", "Hey, Want to test your blood sample? (yes or no)")
+                return "hey"
+            elif request.json["event"]["text"] == "no":
+                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient.chat.post_message("#general", "Stay Healthy, Have a nice day")
+                return "hey"
+            elif request.json["event"]["subtype"] == "bot_message":
                 print("\nMessages")
+                return "message"
             elif request.json["event"]["files"][0]["filetype"] == "png":
-                slackClient = Slacker("xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E")
-                slackClient.chat.post_message("#general", "Malaria Image Found. Please wait while we are analysing the image.")
+                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient.chat.post_message("#general", "Blood Test Sample Image Found. Please wait while we are analysing the image.")
                 u = request.json["event"]["files"][0]["url_private_download"]
-                token = 'xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E'
+                token = 'xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni'
                 opener = urllib.request.build_opener()
                 opener.addheaders = [('Authorization','Bearer '+token)]
                 urllib.request.install_opener(opener)
@@ -109,14 +127,18 @@ def slack_request():
                 img_path = "/home/ubuntu/second_doc/uploadedfiles/frombot.png"
                 if predict_malaria(model, class_names, img_path) == 'Parasitized':
                     print("Infected")
-                    slackClient = Slacker("xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E")
+                    slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
                     slackClient.chat.post_message("#general", "Infected")
                     return "Infected"
                 else:
                     print("unInfected")
-                    slackClient = Slacker("xoxb-577812101602-578150668373-eaxAOPHeKQmUFcFe0bavnb3E")
+                    slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
                     slackClient.chat.post_message("#general", "Uninfected")
                     return "Uninfected"
+            elif request.json["event"]["files"][0]["filetype"] == "jpg":
+                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient.chat.post_message("#general", "Please Input Blood sample")
+                return "Uninfected"
             else:
                 print("\nMessages")
                 return "Hello"
