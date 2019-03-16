@@ -17,7 +17,7 @@ from slacker import Slacker
 import urllib
 # UPLOAD_FOLDER = '/Users/pranoy/Desktop/second_opinion/uploads/'
 # ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-
+Apptoken="xoxb-577812101602-578150668373-3vfxwG5FYWxW130ssW0BFOa4"
 web_hook_url = 'https://hooks.slack.com/services/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'
 
 slack_msg = {'text':'event_data'}
@@ -96,47 +96,47 @@ def slack_request():
         print(request.data)
         try:
             if request.json["event"]["text"] == "Hey":
-                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient = Slacker(Apptoken)
                 slackClient.chat.post_message("#general", "Hey, Want to test your blood sample? (yes or no)")
                 return "Hey"
             elif request.json["event"]["text"] == "yes":
-                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient = Slacker(Apptoken)
                 slackClient.chat.post_message("#general", "Hey, please upload your blood test sample")
                 return "hey"
             
             elif request.json["event"]["text"] == "hey":
-                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient = Slacker(Apptoken)
                 slackClient.chat.post_message("#general", "Hey, Want to test your blood sample? (yes or no)")
                 return "hey"
             elif request.json["event"]["text"] == "no":
-                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient = Slacker(Apptoken)
                 slackClient.chat.post_message("#general", "Stay Healthy, Have a nice day")
                 return "hey"
             elif request.json["event"]["subtype"] == "bot_message":
                 print("\nMessages")
                 return "message"
             elif request.json["event"]["files"][0]["filetype"] == "png":
-                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient = Slacker(Apptoken)
                 slackClient.chat.post_message("#general", "Blood Test Sample Image Found. Please wait while we are analysing the image.")
                 u = request.json["event"]["files"][0]["url_private_download"]
-                token = 'xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni'
+                #token = 'xoxb-577812101602-578150668373-3vfxwG5FYWxW130ssW0BFOa4'
                 opener = urllib.request.build_opener()
-                opener.addheaders = [('Authorization','Bearer '+token)]
+                opener.addheaders = [('Authorization','Bearer '+Apptoken)]
                 urllib.request.install_opener(opener)
                 urllib.request.urlretrieve (u, "/home/ubuntu/second_doc/uploadedfiles/frombot.png")
                 img_path = "/home/ubuntu/second_doc/uploadedfiles/frombot.png"
                 if predict_malaria(model, class_names, img_path) == 'Parasitized':
                     print("Infected")
-                    slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                    slackClient = Slacker(Apptoken)
                     slackClient.chat.post_message("#general", "Infected")
                     return "Infected"
                 else:
                     print("unInfected")
-                    slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                    slackClient = Slacker(Apptoken)
                     slackClient.chat.post_message("#general", "Uninfected")
                     return "Uninfected"
             elif request.json["event"]["files"][0]["filetype"] == "jpg":
-                slackClient = Slacker("xoxb-577812101602-578150668373-SgUKbQ0WCgqKLtxRVvtaWbni")
+                slackClient = Slacker(Apptoken)
                 slackClient.chat.post_message("#general", "Please Input Blood sample")
                 return "Uninfected"
             else:
